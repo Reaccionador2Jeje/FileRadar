@@ -3,6 +3,7 @@ name: FileRadar installers
 on:
   workflow_dispatch:
   push:
+    branches: [main]
     tags:
       - "v*"
 
@@ -36,7 +37,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwxgtk3.2-dev
+          sudo apt-get install -y libwxgtk3.2-dev dpkg-dev
 
       - name: Install macOS dependencies
         if: runner.os == 'macOS'
