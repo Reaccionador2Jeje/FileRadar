@@ -104,7 +104,7 @@ def main() -> None:
 
         core_sources = [
             str(source / "src" / name)
-            for name in ("scanner.cpp", "analyzer.cpp", "duplicates.cpp", "reports.cpp")
+            for name in ("scanner.cpp", "analyzer.cpp", "duplicates.cpp", "reports.cpp", "tui.cpp")
         ]
         test_binary = work / "fileradar-tests"
         say("Compilando y ejecutando las pruebas...")
