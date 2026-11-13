@@ -5,6 +5,10 @@
 #include "fileradar/reports.hpp"
 #include "fileradar/scanner.hpp"
 
+#include <wx/dirdlg.h>
+#include <wx/filedlg.h>
+#include <wx/progdlg.h>
+
 #include <filesystem>
 #include <sstream>
 #include <string>
