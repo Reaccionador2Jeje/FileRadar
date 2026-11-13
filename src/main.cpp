@@ -1,6 +1,7 @@
 #include "fileradar/analyzer.hpp"
 #include "fileradar/duplicates.hpp"
 #include "fileradar/reports.hpp"
+#include "fileradar/repair.hpp"
 #include "fileradar/scanner.hpp"
 #include "fileradar/tui.hpp"
 #include <iostream>
@@ -16,6 +17,8 @@ void print_help() {
         << "  fileradar large <directory> [limit]\n"
         << "  fileradar duplicates <directory>\n"
         << "  fileradar report <directory> [output.json]\n"
+        << "  fileradar repair diagnose <file>\n"
+        << "  fileradar repair scan <directory>\n"
         << "  fileradar --help\n"
         << "  fileradar --version\n\n"
         << "  tui         Open the interactive terminal interface.\n"
@@ -23,7 +26,8 @@ void print_help() {
         << "  scan        Summarize files and storage usage.\n"
         << "  large       List the largest files (default: 20).\n"
         << "  duplicates  Find files with identical contents.\n"
-        << "  report      Generate a JSON analysis report.\n\n"
+        << "  report      Generate a JSON analysis report.\n"
+        << "  repair      Diagnose common file formats (read-only).\n\n"
         << "Safety:\n"
         << "  Read-only: scanned files are never deleted or modified.\n"
         << "  Symbolic links are not followed.\n";
@@ -92,10 +96,10 @@ int run_command(const std::string& command, const std::string& directory, int ar
     return 1;
 }
 }
-int main(int argc, char* argv[]) {
+int run_repair(int argc, char* argv[]) {\n    if (argc < 4) {\n        std::cerr << "Usage: fileradar repair <diagnose|scan> <file-or-directory>\\n";\n        return 1;\n    }\n    const std::string action = argv[2];\n    const std::filesystem::path target(argv[3]);\n    if (action == "diagnose") {\n        const auto item = fileradar::diagnose_file(target);\n        std::cout << "File: " << item.path.string() << "\\nFormat: " << item.format\n                  << "\\nStatus: " << fileradar::health_label(item.health)\n                  << "\\nDetails: " << item.details << "\\n";\n        return item.health == fileradar::FileHealth::ReadError ? 2 : 0;\n    }\n    if (action == "scan") {\n        const auto scan = fileradar::scan_directory(target);\n        if (!scan.root_valid) {\n            std::cerr << "Error: directory is not accessible.\\n";\n            return 2;\n        }\n        std::size_t checked = 0, suspicious = 0, unsupported = 0, errors = 0;\n        for (const auto& file : scan.files) {\n            const auto item = fileradar::diagnose_file(file.path);\n            ++checked;\n            if (item.health == fileradar::FileHealth::Suspicious) ++suspicious;\n            else if (item.health == fileradar::FileHealth::Unsupported) ++unsupported;\n            else if (item.health == fileradar::FileHealth::ReadError) ++errors;\n            if (item.health != fileradar::FileHealth::LooksValid)\n                std::cout << fileradar::health_label(item.health) << " | "\n                          << item.format << " | " << item.path.string() << "\\n"\n                          << "  " << item.details << "\\n";\n        }\n        std::cout << "\\nChecked: " << checked << " | Suspicious: " << suspicious\n                  << " | Unsupported: " << unsupported << " | Read errors: " << errors << "\\n";\n        std::cout << "This is a structural screening, not proof that a file is healthy or damaged.\\n";\n        return 0;\n    }\n    std::cerr << "Unknown repair action. Use diagnose or scan.\\n";\n    return 1;\n}\n\nint main(int argc, char* argv[]) {
     if (argc < 2) return fileradar::run_tui();
     const std::string command = argv[1];
-    if (command == "tui") return fileradar::run_tui();
+    if (command == "tui") return fileradar::run_tui();\n    if (command == "repair") return run_repair(argc, argv);
     if (command == "--help" || command == "-h" || command == "help") {
         print_help(); return 0;
     }
