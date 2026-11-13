@@ -56,11 +56,11 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DFILERADAR_BUILD_GUI=ON -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-static
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DFILERADAR_BUILD_GUI=ON -DFILERADAR_REQUIRE_GUI=ON -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-static
 
       - name: Configure Unix
         if: runner.os != 'Windows'
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DFILERADAR_BUILD_GUI=ON
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DFILERADAR_BUILD_GUI=ON -DFILERADAR_REQUIRE_GUI=ON
 
       - name: Build
         run: cmake --build build --config Release --parallel
