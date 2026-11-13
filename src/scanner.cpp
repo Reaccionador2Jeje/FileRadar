@@ -13,7 +13,7 @@ std::string normalized_extension(const std::filesystem::path& path) {
     return extension.empty() ? "(no extension)" : extension;
 }
 }
-ScanResult scan_directory(const std::filesystem::path& root) {
+ScanResult scan_directory(const std::filesystem::path& root,\n                          const std::function<void(const ScanProgress&)>& on_progress) {
     ScanResult result;
     std::error_code error;
     result.root = std::filesystem::absolute(root, error);
@@ -27,7 +27,7 @@ ScanResult scan_directory(const std::filesystem::path& root) {
     std::filesystem::recursive_directory_iterator it(root, options, error);
     const std::filesystem::recursive_directory_iterator end;
     if (error) { ++result.errors; error.clear(); }
-    while (it != end) {
+    ScanProgress progress;\n    std::size_t last_notified = 0;\n    while (it != end) {
         const auto entry = *it;
         std::error_code status_error;
         const auto status = entry.symlink_status(status_error);
