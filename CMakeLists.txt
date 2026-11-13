@@ -3,6 +3,7 @@ project(FileRadar VERSION 1.3.0 LANGUAGES CXX)
 
 option(FILERADAR_BUILD_TESTS "Build FileRadar tests" ON)
 option(FILERADAR_BUILD_GUI "Build the wxWidgets desktop application when wxWidgets is available" ON)
+option(FILERADAR_REQUIRE_GUI "Fail configuration if the desktop GUI cannot be built" OFF)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -29,7 +30,6 @@ target_link_libraries(fileradar PRIVATE fileradar_core)
 if(FILERADAR_BUILD_GUI)
     set(FILERADAR_WX_LIBRARIES "")
     if(WIN32)
-        # vcpkg provides wxWidgets as imported CMake targets.
         find_package(wxWidgets CONFIG QUIET COMPONENTS core base)
         if(TARGET wx::core AND TARGET wx::base)
             set(FILERADAR_WX_LIBRARIES wx::core wx::base)
@@ -68,6 +68,10 @@ if(FILERADAR_BUILD_GUI)
     endif()
 endif()
 
+if(FILERADAR_REQUIRE_GUI AND NOT TARGET fileradar-gui)
+    message(FATAL_ERROR "FileRadar desktop GUI is required for this package, but wxWidgets was not found.")
+endif()
+
 if(FILERADAR_BUILD_TESTS)
     enable_testing()
     add_executable(fileradar_tests tests/test_core.cpp)
@@ -90,12 +94,17 @@ if(TARGET fileradar-gui)
     else()
         install(TARGETS fileradar-gui RUNTIME DESTINATION bin)
     endif()
+
+    if(UNIX AND NOT APPLE)
+        install(FILES packaging/fileradar.desktop DESTINATION share/applications)
+        install(FILES packaging/fileradar.svg
+            DESTINATION share/icons/hicolor/scalable/apps)
+    endif()
 endif()
 install(FILES README.md LICENSE DESTINATION share/doc/FileRadar)
 
-# Native installer formats: NSIS on Windows, DEB on Linux, DMG on macOS.
 set(CPACK_PACKAGE_NAME "FileRadar")
-set(CPACK_PACKAGE_VENDOR "FileRadar Project")
+set(CPACK_PACKAGE_VENDOR "AtDev")
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Cross-platform storage analyzer and duplicate finder")
 set(CPACK_PACKAGE_HOMEPAGE_URL "https://github.com/Reaccionador2Jeje/FileRadar")
@@ -109,11 +118,15 @@ if(WIN32)
     set(CPACK_NSIS_PACKAGE_NAME "FileRadar")
     set(CPACK_NSIS_MODIFY_PATH ON)
     set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
+    set(CPACK_NSIS_CREATE_ICONS_EXTRA
+        "CreateShortCut '$DESKTOP\\FileRadar.lnk' '$INSTDIR\\bin\\fileradar-gui.exe'"
+        "CreateShortCut '$SMPROGRAMS\\$STARTMENU_FOLDER\\FileRadar.lnk' '$INSTDIR\\bin\\fileradar-gui.exe'"
+    )
 elseif(APPLE)
     set(CPACK_GENERATOR "DragNDrop")
 elseif(UNIX)
     set(CPACK_GENERATOR "DEB")
-    set(CPACK_DEBIAN_PACKAGE_MAINTAINER "FileRadar Project")
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER "AtDev")
     set(CPACK_DEBIAN_PACKAGE_SECTION "utils")
     set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 endif()
