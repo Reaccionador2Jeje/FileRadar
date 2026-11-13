@@ -31,20 +31,33 @@ The executable is created at build/fileradar.
 
 ## Install on Android with Termux (recommended)
 
-For a one-command installation, open Termux and run:
+This installer uses Python's standard library for downloading and Clang for compilation. It does **not** require `curl`, `wget`, `git`, or CMake.
+
+Install the requirements:
 
 ```sh
-pkg install -y curl
-curl -fsSL https://raw.githubusercontent.com/Reaccionador2Jeje/FileRadar/main/scripts/install-termux.sh | bash
+pkg install -y python clang
 ```
 
-The installer installs the required build tools, downloads FileRadar, compiles it, runs its tests, and installs the `fileradar` command into Termux. Then use:
+Then run the public installer:
+
+```sh
+python -c "import urllib.request; exec(compile(urllib.request.urlopen('https://raw.githubusercontent.com/Reaccionador2Jeje/FileRadar/main/scripts/install-termux.py').read(), 'install-termux.py', 'exec'))"
+```
+
+The installer downloads the source archive from GitHub using Python, compiles and runs the core tests, then installs `fileradar` into Termux's `bin` directory. It does not modify your scanned files.
+
+After installation:
 
 ```sh
 fileradar --help
 ```
 
-To update, run the same installer command again. To uninstall the command, download and run `scripts/uninstall-termux.sh` from the repository. The uninstaller asks separately before deleting the downloaded source and build directory.
+To update, run the same installer command again. To uninstall, remove the installed command with:
+
+```sh
+rm -f "$PREFIX/bin/fileradar"
+```
 
 ## Build on Android with Termux
 
