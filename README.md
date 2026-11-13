@@ -16,7 +16,7 @@ FileRadar helps you understand what is stored on a drive or inside a directory. 
 - Live scan counters in the TUI: entries, files, folders, bytes and errors.
 - Optional desktop GUI built with wxWidgets for Windows, Linux and macOS.
 - Cross-platform C++17 build targets for Windows, Linux and macOS.
-- Read-only operation: scanned files are never deleted or modified.
+- Read-only structural diagnostics for basic PDF, PNG, JPEG and ZIP markers.\n- Read-only operation: scanned files are never deleted or modified.
 - Symbolic links are not followed.
 - The CLI/TUI core has no third-party runtime dependencies; the optional desktop GUI requires wxWidgets.
 
@@ -137,7 +137,7 @@ Examples:
     ./build/fileradar duplicates ~/storage/shared/Documents
     ./build/fileradar report . report.json
 
-If no output file is supplied to report, JSON is written to standard output.
+If no output file is supplied to report, JSON is written to standard output.\n\n`repair diagnose` checks one file; `repair scan` checks supported files in a directory. The first diagnostic pass recognizes basic PDF, PNG, JPEG and ZIP structure markers. It is read-only and does not attempt repair yet. A marker check is not a full format validator.
 
 ## Safety and privacy
 
