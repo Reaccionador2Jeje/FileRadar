@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(FileRadar VERSION 1.0.0 LANGUAGES CXX)
+project(FileRadar VERSION 1.2.0 LANGUAGES CXX)
 option(FILERADAR_BUILD_TESTS "Build FileRadar tests" ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
