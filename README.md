@@ -157,3 +157,8 @@ Always review a report before making manual storage changes.
 ## License
 
 FileRadar is distributed under the Apache License 2.0. See LICENSE.
+
+
+### TUI diagnostics
+
+The TUI includes options to diagnose an individual file and scan the selected folder for suspicious file structures. These checks are read-only and do not repair or modify files.
