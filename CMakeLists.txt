@@ -82,7 +82,7 @@ if(TARGET fileradar-gui)
         install(TARGETS fileradar-gui BUNDLE DESTINATION .)
         install(CODE [[
             include(BundleUtilities)
-            set(bundle "${CMAKE_INSTALL_PREFIX}/FileRadar.app")
+            set(bundle "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/FileRadar.app")
             if(EXISTS "${bundle}")
                 fixup_bundle("${bundle}" "" "")
             endif()
