@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=FileRadar
+GenericName=Storage Analyzer
+Comment=Analyze disk usage and find duplicate files
+Exec=fileradar-gui
+TryExec=fileradar-gui
+Icon=fileradar
+Terminal=false
+Categories=System;Utility;Filesystem;
+StartupNotify=true
