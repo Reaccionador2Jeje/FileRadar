@@ -2,7 +2,7 @@
 
 **A cross-platform storage analyzer, duplicate finder and disk usage inspector written in C++.**
 
-FileRadar helps you understand what is stored on a drive or inside a directory. Version 1.2.0 adds an interactive terminal interface (TUI) with live scan statistics, alongside the classic command-line tools and JSON reports.
+FileRadar helps you understand what is stored on a drive or inside a directory. Version 1.3.0 adds a wxWidgets desktop GUI with folder browsing, scan summaries, largest-file and duplicate views, and JSON export. The TUI and command-line tools remain available.
 
 ## Features
 
@@ -14,10 +14,11 @@ FileRadar helps you understand what is stored on a drive or inside a directory. 
 - JSON report generation.
 - Interactive TUI menu for scanning, largest files, duplicate detection and JSON export.
 - Live scan counters in the TUI: entries, files, folders, bytes and errors.
+- Optional desktop GUI built with wxWidgets for Windows, Linux and macOS.
 - Cross-platform C++17 build targets for Windows, Linux and macOS.
 - Read-only operation: scanned files are never deleted or modified.
 - Symbolic links are not followed.
-- No third-party runtime dependencies.
+- The CLI/TUI core has no third-party runtime dependencies; the optional desktop GUI requires wxWidgets.
 
 ## Requirements
 
@@ -34,13 +35,28 @@ FileRadar uses standard C++17 and CMake. The CI workflow builds and tests on Ubu
 
 On Windows, run these commands from a Developer PowerShell or a terminal where your C++ compiler is configured.
 
+## Build the desktop GUI
+
+Install wxWidgets development files before configuring CMake. Examples:
+
+- Ubuntu/Debian: `sudo apt install libwxgtk3.2-dev`
+- macOS with Homebrew: `brew install wxwidgets`
+- Windows: install wxWidgets development libraries and make them discoverable by CMake (for example, through vcpkg).
+
+Then configure and build as usual:
+
+    cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DFILERADAR_BUILD_GUI=ON
+    cmake --build build --config Release --parallel
+
+When wxWidgets is detected, the graphical application is built as `fileradar-gui` (or `fileradar-gui.exe`). Without wxWidgets, CMake still builds the CLI/TUI normally.
+
 ## Build on Linux
 
     cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
     cmake --build build --parallel
     ctest --test-dir build --output-on-failure
 
-The executable is created at build/fileradar.
+The terminal executable is created at build/fileradar. If wxWidgets is installed, the desktop app is also created at build/fileradar-gui.
 
 ## Install on Android with Termux (recommended)
 
@@ -113,7 +129,7 @@ If no output file is supplied to report, JSON is written to standard output.
 
 ## Safety and privacy
 
-FileRadar 1.2.0 is an offline, read-only analyzer. It does not upload file names or file contents, and it does not remove, rename, or modify scanned files. Duplicate detection reads candidate files to compare their contents. Permission errors are counted and skipped where possible.
+FileRadar 1.3.0 is an offline, read-only analyzer. It does not upload file names or file contents, and it does not remove, rename, or modify scanned files. Duplicate detection reads candidate files to compare their contents. Permission errors are counted and skipped where possible.
 
 Always review a report before making manual storage changes.
 
