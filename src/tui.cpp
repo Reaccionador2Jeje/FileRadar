@@ -61,7 +61,18 @@ void draw_header(const std::string& directory) {
 
 bool scan_for_tui(const std::string& directory, ScanResult& result) {
     std::cout << yellow << "\n[>] Escaneando carpeta...\n" << reset;
-    result = scan_directory(directory);
+    result = scan_directory(directory, [](const ScanProgress& progress) {
+        static const char spinner[] = {'|', '/', '-', '\\\\'};
+        const char frame = spinner[progress.entries_processed / 32 % 4];
+        std::cout << "\\r  " << cyan << "[" << frame << "]" << reset
+                  << " Revisados: " << progress.entries_processed
+                  << " | Archivos: " << progress.files_found
+                  << " | Carpetas: " << progress.directories_visited
+                  << " | Datos: " << format_bytes(progress.bytes_found)
+                  << " | Errores: " << progress.errors
+                  << "   " << std::flush;
+    });
+    std::cout << "\\n";
     if (!result.root_valid) {
         std::cout << red << "No se pudo abrir esa carpeta. Revisa la ruta y permisos.\n" << reset;
         return false;
