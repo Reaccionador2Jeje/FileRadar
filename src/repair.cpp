@@ -94,7 +94,8 @@ FileDiagnostic diagnose_file(const std::filesystem::path& path) {
         const auto tail_size = static_cast<std::size_t>(std::min<std::uintmax_t>(size, 12));
         const auto tail = read_bytes(path, size - tail_size, tail_size);
         const std::vector<unsigned char> iend{0x00, 0x00, 0x00, 0x00, 'I', 'E', 'N', 'D'};
-        result.health = size >= 20 && ends_with(tail, iend)
+        result.health = size >= 20 &&
+            std::search(tail.begin(), tail.end(), iend.begin(), iend.end()) != tail.end()
             ? FileHealth::LooksValid : FileHealth::Suspicious;
         result.details = result.health == FileHealth::LooksValid
             ? "PNG signature and IEND marker found; chunk CRCs are not checked."
