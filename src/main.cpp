@@ -3,6 +3,7 @@
 #include "fileradar/reports.hpp"
 #include "fileradar/scanner.hpp"
 #include <iostream>
+#include <limits>
 #include <string>
 namespace {
 void print_help() {
@@ -27,9 +28,10 @@ void print_help() {
 bool parse_limit(const char* text, std::size_t& value) {
     try {
         const std::string input(text);
+        if (input.empty() || input.front() == '-') return false;
         std::size_t used = 0;
         const auto parsed = std::stoull(input, &used);
-        if (used != input.size()) return false;
+        if (used != input.size() || parsed > std::numeric_limits<std::size_t>::max()) return false;
         value = static_cast<std::size_t>(parsed);
         return true;
     } catch (...) { return false; }
