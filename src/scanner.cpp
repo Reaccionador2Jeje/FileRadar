@@ -30,11 +30,15 @@ ScanResult scan_directory(const std::filesystem::path& root) {
     while (it != end) {
         const auto entry = *it;
         std::error_code status_error;
-        if (entry.is_directory(status_error)) {
-            ++result.directories_visited;
-        } else if (status_error) {
+        const auto status = entry.symlink_status(status_error);
+        if (status_error) {
             ++result.errors;
-        } else if (entry.is_regular_file(status_error)) {
+        } else if (std::filesystem::is_symlink(status)) {
+            // Do not inspect or follow symbolic links.
+            ++result.entries_skipped;
+        } else if (std::filesystem::is_directory(status)) {
+            ++result.directories_visited;
+        } else if (std::filesystem::is_regular_file(status)) {
             const auto size = entry.file_size(status_error);
             if (status_error) {
                 ++result.errors;
@@ -42,8 +46,6 @@ ScanResult scan_directory(const std::filesystem::path& root) {
                 result.files.push_back({entry.path(), size, normalized_extension(entry.path())});
                 result.total_bytes += size;
             }
-        } else if (status_error) {
-            ++result.errors;
         } else {
             ++result.entries_skipped;
         }
