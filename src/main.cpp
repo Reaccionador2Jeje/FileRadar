@@ -2,6 +2,7 @@
 #include "fileradar/duplicates.hpp"
 #include "fileradar/reports.hpp"
 #include "fileradar/scanner.hpp"
+#include "fileradar/tui.hpp"
 #include <iostream>
 #include <limits>
 #include <string>
@@ -10,12 +11,14 @@ void print_help() {
     std::cout
         << "FileRadar 1.0.0 - storage analyzer\n\n"
         << "Usage:\n"
+        << "  fileradar [tui]\n"
         << "  fileradar scan <directory>\n"
         << "  fileradar large <directory> [limit]\n"
         << "  fileradar duplicates <directory>\n"
         << "  fileradar report <directory> [output.json]\n"
         << "  fileradar --help\n"
         << "  fileradar --version\n\n"
+        << "  tui         Open the interactive terminal interface.\n"
         << "Commands:\n"
         << "  scan        Summarize files and storage usage.\n"
         << "  large       List the largest files (default: 20).\n"
@@ -90,8 +93,9 @@ int run_command(const std::string& command, const std::string& directory, int ar
 }
 }
 int main(int argc, char* argv[]) {
-    if (argc < 2) { print_help(); return 0; }
+    if (argc < 2) return fileradar::run_tui();
     const std::string command = argv[1];
+    if (command == "tui") return fileradar::run_tui();
     if (command == "--help" || command == "-h" || command == "help") {
         print_help(); return 0;
     }
