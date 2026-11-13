@@ -41,7 +41,7 @@ MainFrame::MainFrame()
 
     auto* path_row = new wxBoxSizer(wxHORIZONTAL);
     directory_ = new wxTextCtrl(panel, wxID_ANY,
-        wxString::FromUTF8(std::filesystem::current_path().string()));
+        wxString(std::filesystem::current_path().wstring()));
     auto* browse = new wxButton(panel, wxID_ANY, "Browse...");
     path_row->Add(directory_, 1, wxRIGHT, 8);
     path_row->Add(browse, 0);
@@ -98,7 +98,7 @@ void MainFrame::choose_directory(wxCommandEvent&) {
 }
 
 void MainFrame::run_scan(wxCommandEvent&) {
-    const std::filesystem::path path(directory_->GetValue().ToStdString());
+    const std::filesystem::path path(directory_->GetValue().ToStdWstring());
     std::error_code ec;
     if (!std::filesystem::is_directory(path, ec) || ec) {
         wxMessageBox("Please choose an accessible folder.", "Invalid folder",
@@ -110,7 +110,7 @@ void MainFrame::run_scan(wxCommandEvent&) {
         100, this, wxPD_APP_MODAL | wxPD_AUTO_HIDE | wxPD_ELAPSED_TIME);
     SetStatusText("Scanning...");
     output_->Clear();
-    append("Scanning: " + wxString::FromUTF8(path.string()) + "\n\n");
+    append("Scanning: " + wxString(path.wstring()) + "\n\n");
 
     last_result_ = scan_directory(path, [&progress](const ScanProgress& state) {
         const wxString message = wxString::Format(
@@ -149,7 +149,7 @@ void MainFrame::run_scan(wxCommandEvent&) {
     const auto extensions = analyze_extensions(last_result_.files);
     for (const auto& item : extensions) {
         append(wxString::Format("%s  |  %llu files  |  %s\n",
-            wxString::FromUTF8(item.extension),
+            wxString::FromUTF8(item.extension.c_str()),
             static_cast<unsigned long long>(item.file_count),
             human_bytes(item.total_bytes)));
     }
@@ -184,7 +184,7 @@ void MainFrame::show_duplicates(wxCommandEvent&) {
         append(wxString::Format("\nGroup %llu\n",
             static_cast<unsigned long long>(i + 1)));
         for (const auto& file : groups[i]) {
-            append(wxString::FromUTF8(file.path.string()) + "\n");
+            append(wxString(file.path.wstring()) + "\n");
         }
     }
     SetStatusText(wxString::Format("%llu duplicate groups",
@@ -199,7 +199,7 @@ void MainFrame::export_report(wxCommandEvent&) {
 
     std::string error;
     if (!write_json_report(last_result_, dialog.GetPath().ToStdString(), error)) {
-        wxMessageBox(wxString::FromUTF8(error), "Export failed",
+        wxMessageBox(wxString::FromUTF8(error.c_str()), "Export failed",
                      wxOK | wxICON_ERROR, this);
         return;
     }
