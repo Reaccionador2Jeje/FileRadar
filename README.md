@@ -50,6 +50,18 @@ Then configure and build as usual:
 
 When wxWidgets is detected, the graphical application is built as `fileradar-gui` (or `fileradar-gui.exe`). Without wxWidgets, CMake still builds the CLI/TUI normally.
 
+## Build native installers
+
+The repository includes a GitHub Actions workflow that builds native desktop packages on all three desktop platforms:
+
+- Windows: NSIS setup installer (`.exe`).
+- Linux: Debian package (`.deb`).
+- macOS: drag-and-drop disk image (`.dmg`).
+
+To generate them, open **Actions → FileRadar installers → Run workflow** in GitHub. The workflow installs wxWidgets, builds the graphical app and CLI/TUI, runs the tests, creates the native package with CPack, and uploads each installer as a workflow artifact. Windows uses a static wxWidgets build; the macOS app bundle collects its non-system runtime libraries; the Debian package records shared-library dependencies.
+
+The workflow also runs when a version tag beginning with `v` is pushed. These artifacts are build outputs, not a published GitHub Release. Publish a Release only after all three platform jobs have succeeded.
+
 ## Build on Linux
 
     cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
