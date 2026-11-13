@@ -15,6 +15,7 @@ add_library(fileradar_core
     src/duplicates.cpp
     src/reports.cpp
     src/tui.cpp
+    src/repair.cpp
 )
 target_include_directories(fileradar_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
