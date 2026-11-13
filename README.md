@@ -16,7 +16,8 @@ FileRadar helps you understand what is stored on a drive or inside a directory. 
 - Live scan counters in the TUI: entries, files, folders, bytes and errors.
 - Optional desktop GUI built with wxWidgets for Windows, Linux and macOS.
 - Cross-platform C++17 build targets for Windows, Linux and macOS.
-- Read-only structural diagnostics for basic PDF, PNG, JPEG and ZIP markers.\n- Read-only operation: scanned files are never deleted or modified.
+- Read-only structural diagnostics for basic PDF, PNG, JPEG and ZIP markers.
+- Read-only operation: scanned files are never deleted or modified.
 - Symbolic links are not followed.
 - The CLI/TUI core has no third-party runtime dependencies; the optional desktop GUI requires wxWidgets.
 
@@ -125,6 +126,8 @@ On Android, grant Termux storage access using Android's normal permission flow i
     fileradar large <directory> [limit]
     fileradar duplicates <directory>
     fileradar report <directory> [output.json]
+    fileradar repair diagnose <file>
+    fileradar repair scan <directory>
     fileradar tui
     fileradar --help
     fileradar --version
