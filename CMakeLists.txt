@@ -47,7 +47,15 @@ if(FILERADAR_BUILD_GUI)
     endif()
 
     if(FILERADAR_WX_LIBRARIES)
-        if(WIN32)
+        if(APPLE)
+            add_executable(fileradar-gui MACOSX_BUNDLE src/gui_main.cpp src/gui.cpp)
+            set_target_properties(fileradar-gui PROPERTIES
+                MACOSX_BUNDLE_BUNDLE_NAME "FileRadar"
+                MACOSX_BUNDLE_GUI_IDENTIFIER "dev.atdev.fileradar"
+                MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
+                MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
+            )
+        elseif(WIN32)
             add_executable(fileradar-gui WIN32 src/gui_main.cpp src/gui.cpp)
         else()
             add_executable(fileradar-gui src/gui_main.cpp src/gui.cpp)
@@ -70,7 +78,18 @@ endif()
 
 install(TARGETS fileradar RUNTIME DESTINATION bin)
 if(TARGET fileradar-gui)
-    install(TARGETS fileradar-gui RUNTIME DESTINATION bin)
+    if(APPLE)
+        install(TARGETS fileradar-gui BUNDLE DESTINATION .)
+        install(CODE [[
+            include(BundleUtilities)
+            set(bundle "${CMAKE_INSTALL_PREFIX}/FileRadar.app")
+            if(EXISTS "${bundle}")
+                fixup_bundle("${bundle}" "" "")
+            endif()
+        ]])
+    else()
+        install(TARGETS fileradar-gui RUNTIME DESTINATION bin)
+    endif()
 endif()
 install(FILES README.md LICENSE DESTINATION share/doc/FileRadar)
 
