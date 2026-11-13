@@ -2,7 +2,7 @@
 
 **A cross-platform storage analyzer, duplicate finder and disk usage inspector written in C++.**
 
-FileRadar helps you understand what is stored on a drive or inside a directory. Version 1.1.0 adds an interactive terminal interface (TUI), alongside the classic command-line tools and JSON reports.
+FileRadar helps you understand what is stored on a drive or inside a directory. Version 1.2.0 adds an interactive terminal interface (TUI) with live scan statistics, alongside the classic command-line tools and JSON reports.
 
 ## Features
 
@@ -13,6 +13,8 @@ FileRadar helps you understand what is stored on a drive or inside a directory. 
 - Duplicate detection with a fast fingerprint followed by byte-for-byte verification.
 - JSON report generation.
 - Interactive TUI menu for scanning, largest files, duplicate detection and JSON export.
+- Live scan counters in the TUI: entries, files, folders, bytes and errors.
+- Cross-platform C++17 build targets for Windows, Linux and macOS.
 - Read-only operation: scanned files are never deleted or modified.
 - Symbolic links are not followed.
 - No third-party runtime dependencies.
@@ -21,6 +23,16 @@ FileRadar helps you understand what is stored on a drive or inside a directory. 
 
 - A C++17 compiler (GCC 8+, Clang 7+, or a recent MSVC).
 - CMake 3.16 or newer.
+
+## Build on desktop (Windows, Linux and macOS)
+
+FileRadar uses standard C++17 and CMake. The CI workflow builds and tests on Ubuntu, Windows and macOS. Install a C++17 compiler and CMake 3.16+ for your platform, then run:
+
+    cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+    cmake --build build --config Release --parallel
+    ctest --test-dir build -C Release --output-on-failure
+
+On Windows, run these commands from a Developer PowerShell or a terminal where your C++ compiler is configured.
 
 ## Build on Linux
 
@@ -101,7 +113,7 @@ If no output file is supplied to report, JSON is written to standard output.
 
 ## Safety and privacy
 
-FileRadar 1.1.0 is an offline, read-only analyzer. It does not upload file names or file contents, and it does not remove, rename, or modify scanned files. Duplicate detection reads candidate files to compare their contents. Permission errors are counted and skipped where possible.
+FileRadar 1.2.0 is an offline, read-only analyzer. It does not upload file names or file contents, and it does not remove, rename, or modify scanned files. Duplicate detection reads candidate files to compare their contents. Permission errors are counted and skipped where possible.
 
 Always review a report before making manual storage changes.
 
