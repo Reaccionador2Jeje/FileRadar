@@ -2,6 +2,7 @@
 #include "fileradar/analyzer.hpp"
 #include "fileradar/duplicates.hpp"
 #include "fileradar/reports.hpp"
+#include "fileradar/repair.hpp"
 #include "fileradar/scanner.hpp"
 
 #include <cstdint>
@@ -148,6 +149,76 @@ void save_report(const ScanResult& result) {
     }
     std::cout << green << "Informe guardado en: " << output << reset << "\n";
 }
+
+void diagnose_one_file() {
+    std::cout << "Ruta del archivo: ";
+    std::string path;
+    std::getline(std::cin, path);
+    if (path.empty()) {
+        std::cout << yellow << "Diagnostico cancelado.\n" << reset;
+        return;
+    }
+
+    const auto item = diagnose_file(path);
+    std::cout << "\n" << bold << "DIAGNOSTICO DE ARCHIVO" << reset << "\n";
+    std::cout << "Archivo: " << item.path.string() << "\n";
+    std::cout << "Formato: " << item.format << "\n";
+    std::cout << "Estado:  ";
+    if (item.health == FileHealth::LooksValid)
+        std::cout << green;
+    else if (item.health == FileHealth::Suspicious || item.health == FileHealth::ReadError)
+        std::cout << red;
+    else
+        std::cout << yellow;
+    std::cout << health_label(item.health) << reset << "\n";
+    std::cout << "Detalle: " << item.details << "\n";
+    std::cout << yellow
+              << "Nota: la revision estructural no garantiza que el archivo este completamente sano.\n"
+              << reset;
+}
+
+void diagnose_directory(const std::string& directory) {
+    std::cout << yellow << "\n[>] Revisando estructura de archivos...\n" << reset;
+    ScanResult scan;
+    if (!scan_for_tui(directory, scan)) return;
+
+    std::size_t checked = 0;
+    std::size_t valid = 0;
+    std::size_t suspicious = 0;
+    std::size_t unsupported = 0;
+    std::size_t errors = 0;
+
+    std::cout << "\n" << bold << "RESULTADOS DEL DIAGNOSTICO" << reset << "\n";
+    for (const auto& file : scan.files) {
+        const auto item = diagnose_file(file.path);
+        ++checked;
+        switch (item.health) {
+            case FileHealth::LooksValid: ++valid; break;
+            case FileHealth::Suspicious: ++suspicious; break;
+            case FileHealth::Unsupported: ++unsupported; break;
+            case FileHealth::ReadError: ++errors; break;
+        }
+
+        if (item.health != FileHealth::LooksValid) {
+            const char* color = item.health == FileHealth::Suspicious ||
+                                item.health == FileHealth::ReadError ? red : yellow;
+            std::cout << color << "[" << health_label(item.health) << "] "
+                      << item.format << reset << " | " << item.path.string() << "\n"
+                      << "  " << item.details << "\n";
+        }
+    }
+
+    std::cout << "\n" << bold << "RESUMEN DE DIAGNOSTICO" << reset << "\n"
+              << "Revisados:    " << checked << "\n"
+              << green << "Validos:      " << valid << reset << "\n"
+              << red << "Sospechosos:  " << suspicious << reset << "\n"
+              << yellow << "No soportados:" << unsupported << reset << "\n"
+              << red << "Errores:      " << errors << reset << "\n";
+    std::cout << yellow
+              << "Aviso: FileRadar realiza comprobaciones estructurales basicas; "
+              << "no modifica ni repara archivos.\n"
+              << reset;
+}
 } // namespace
 
 int run_tui() {
@@ -160,7 +231,9 @@ int run_tui() {
             << "  [2] Ver archivos mas grandes\n"
             << "  [3] Buscar duplicados\n"
             << "  [4] Exportar informe JSON\n"
-            << "  [5] Cambiar carpeta\n"
+            << "  [5] Diagnosticar un archivo\n"
+            << "  [6] Buscar archivos sospechosos en la carpeta\n"
+            << "  [7] Cambiar carpeta\n"
             << "  [0] Salir\n"
             << "\n  Selecciona una opcion: ";
 
@@ -170,11 +243,21 @@ int run_tui() {
             std::cout << green << "\nFileRadar TUI cerrado. Hasta luego.\n" << reset;
             return 0;
         }
-        if (choice == "5") {
+        if (choice == "7") {
             std::cout << "Nueva ruta: ";
             std::string next;
             std::getline(std::cin, next);
             if (!next.empty()) directory = next;
+            continue;
+        }
+        if (choice == "5") {
+            diagnose_one_file();
+            wait_for_enter();
+            continue;
+        }
+        if (choice == "6") {
+            diagnose_directory(directory);
+            wait_for_enter();
             continue;
         }
         if (choice != "1" && choice != "2" && choice != "3" && choice != "4") {
