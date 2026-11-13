@@ -10,6 +10,14 @@ struct FileEntry {
     std::uintmax_t size = 0;
     std::string extension;
 };
+struct ScanProgress {
+    std::size_t entries_processed = 0;
+    std::size_t files_found = 0;
+    std::size_t directories_visited = 0;
+    std::size_t entries_skipped = 0;
+    std::size_t errors = 0;
+    std::uintmax_t bytes_found = 0;
+};
 struct ScanResult {
     std::filesystem::path root;
     std::vector<FileEntry> files;
