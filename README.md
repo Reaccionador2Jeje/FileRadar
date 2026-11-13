@@ -2,7 +2,7 @@
 
 **A cross-platform storage analyzer, duplicate finder and disk usage inspector written in C++.**
 
-FileRadar helps you understand what is stored on a drive or inside a directory. Version 1.0.0 provides a lightweight command-line interface and JSON reports.
+FileRadar helps you understand what is stored on a drive or inside a directory. Version 1.1.0 adds an interactive terminal interface (TUI), alongside the classic command-line tools and JSON reports.
 
 ## Features
 
@@ -12,6 +12,7 @@ FileRadar helps you understand what is stored on a drive or inside a directory. 
 - File grouping by extension.
 - Duplicate detection with a fast fingerprint followed by byte-for-byte verification.
 - JSON report generation.
+- Interactive TUI menu for scanning, largest files, duplicate detection and JSON export.
 - Read-only operation: scanned files are never deleted or modified.
 - Symbolic links are not followed.
 - No third-party runtime dependencies.
@@ -96,7 +97,7 @@ If no output file is supplied to report, JSON is written to standard output.
 
 ## Safety and privacy
 
-FileRadar 1.0.0 is an offline, read-only analyzer. It does not upload file names or file contents, and it does not remove, rename, or modify scanned files. Duplicate detection reads candidate files to compare their contents. Permission errors are counted and skipped where possible.
+FileRadar 1.1.0 is an offline, read-only analyzer. It does not upload file names or file contents, and it does not remove, rename, or modify scanned files. Duplicate detection reads candidate files to compare their contents. Permission errors are counted and skipped where possible.
 
 Always review a report before making manual storage changes.
 
