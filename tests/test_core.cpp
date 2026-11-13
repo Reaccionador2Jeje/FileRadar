@@ -1,6 +1,7 @@
 #include "fileradar/analyzer.hpp"
 #include "fileradar/duplicates.hpp"
 #include "fileradar/scanner.hpp"
+#include "fileradar/repair.hpp"
 #include <chrono>
 #include <filesystem>
 #include <fstream>
@@ -24,6 +25,13 @@ int main() {
             !write_file(root / "nested" / "copy.txt", "same contents") ||
             !write_file(root / "different.bin", "different"))
             throw std::runtime_error("could not create test files");
+        const std::string png_bytes("\\x89PNG\\r\\n\\x1a\\n", 8);
+        if (!write_file(root / "valid.png", png_bytes + std::string(4, '\\0') +
+                         "IEND" + std::string("\\xAE\\x42\\x60\\x82", 4)))
+            throw std::runtime_error("could not create PNG diagnostic fixture");
+        const auto png_check = fileradar::diagnose_file(root / "valid.png");
+        if (png_check.format != "PNG" || png_check.health != fileradar::FileHealth::LooksValid)
+            throw std::runtime_error("PNG structural diagnosis failed");
         const auto scan = fileradar::scan_directory(root);
         if (!scan.root_valid || scan.files.size() != 3 || scan.total_bytes == 0)
             throw std::runtime_error("directory scan returned unexpected results");
