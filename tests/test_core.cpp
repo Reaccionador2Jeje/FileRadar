@@ -33,7 +33,7 @@ int main() {
         if (png_check.format != "PNG" || png_check.health != fileradar::FileHealth::LooksValid)
             throw std::runtime_error("PNG structural diagnosis failed");
         const auto scan = fileradar::scan_directory(root);
-        if (!scan.root_valid || scan.files.size() != 3 || scan.total_bytes == 0)
+        if (!scan.root_valid || scan.files.size() != 4 || scan.total_bytes == 0)
             throw std::runtime_error("directory scan returned unexpected results");
         const auto duplicates = fileradar::find_duplicates(scan.files);
         if (duplicates.size() != 1 || duplicates.front().size() != 2)
@@ -42,7 +42,7 @@ int main() {
         if (largest.size() != 1 || largest.front().size != 13)
             throw std::runtime_error("largest-file analysis failed");
         const auto extensions = fileradar::analyze_extensions(scan.files);
-        if (extensions.size() != 2)
+        if (extensions.size() != 3)
             throw std::runtime_error("extension analysis failed");
         fs::remove_all(root);
         std::cout << "All FileRadar core tests passed.\n";
