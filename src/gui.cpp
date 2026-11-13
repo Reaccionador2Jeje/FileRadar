@@ -148,10 +148,10 @@ void MainFrame::run_scan(wxCommandEvent&) {
     append("FILE TYPES\n");
     const auto extensions = analyze_extensions(last_result_.files);
     for (const auto& item : extensions) {
-        append(wxString::Format("%s  |  %llu files  |  %s\n",
-            wxString::FromUTF8(item.extension.c_str()),
-            static_cast<unsigned long long>(item.file_count),
-            human_bytes(item.total_bytes)));
+        append(wxString::FromUTF8(item.extension.c_str()) + "  |  " +
+            wxString::Format("%llu files  |  ",
+                static_cast<unsigned long long>(item.file_count)) +
+            human_bytes(item.total_bytes) + "\n");
     }
     SetStatusText("Scan complete");
 }
@@ -162,10 +162,10 @@ void MainFrame::show_largest(wxCommandEvent&) {
     append("LARGEST FILES\n\n");
     const auto files = largest_files(last_result_.files, 30);
     for (std::size_t i = 0; i < files.size(); ++i) {
-        append(wxString::Format("%2llu. %10s  %s\n",
-            static_cast<unsigned long long>(i + 1),
-            human_bytes(files[i].size),
-            wxString::FromUTF8(files[i].path.string())));
+        append(wxString::Format("%2llu. ",
+            static_cast<unsigned long long>(i + 1)) +
+            human_bytes(files[i].size) + "  " +
+            wxString(files[i].path.wstring()) + "\n");
     }
     SetStatusText("Largest files");
 }
@@ -198,7 +198,7 @@ void MainFrame::export_report(wxCommandEvent&) {
     if (dialog.ShowModal() != wxID_OK) return;
 
     std::string error;
-    if (!write_json_report(last_result_, dialog.GetPath().ToStdString(), error)) {
+    if (!write_json_report(last_result_, dialog.GetPath().ToStdWstring(), error)) {
         wxMessageBox(wxString::FromUTF8(error.c_str()), "Export failed",
                      wxOK | wxICON_ERROR, this);
         return;
