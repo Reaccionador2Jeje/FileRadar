@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_library(fileradar_core src/scanner.cpp src/analyzer.cpp src/duplicates.cpp src/reports.cpp)
+add_library(fileradar_core src/scanner.cpp src/analyzer.cpp src/duplicates.cpp src/reports.cpp src/tui.cpp)
 target_include_directories(fileradar_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 if(MSVC)
   target_compile_options(fileradar_core PRIVATE /W4 /permissive-)
