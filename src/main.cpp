@@ -9,7 +9,7 @@
 namespace {
 void print_help() {
     std::cout
-        << "FileRadar 1.1.0 - storage analyzer\n\n"
+        << "FileRadar 1.2.0 - storage analyzer\n\n"
         << "Usage:\n"
         << "  fileradar [tui]\n"
         << "  fileradar scan <directory>\n"
@@ -100,7 +100,7 @@ int main(int argc, char* argv[]) {
         print_help(); return 0;
     }
     if (command == "--version" || command == "-v") {
-        std::cout << "FileRadar 1.1.0\n"; return 0;
+        std::cout << "FileRadar 1.2.0\n"; return 0;
     }
     if (argc < 3) {
         std::cerr << "Error: a directory path is required.\n\n";
