@@ -79,15 +79,19 @@ On Android, grant Termux storage access using Android's normal permission flow i
 
 ## Commands
 
+    fileradar              # Open interactive TUI
+    fileradar tui          # Open interactive TUI
     fileradar scan <directory>
     fileradar large <directory> [limit]
     fileradar duplicates <directory>
     fileradar report <directory> [output.json]
+    fileradar tui
     fileradar --help
     fileradar --version
 
 Examples:
 
+    ./build/fileradar
     ./build/fileradar scan .
     ./build/fileradar large ~/storage/shared/Download 15
     ./build/fileradar duplicates ~/storage/shared/Documents
