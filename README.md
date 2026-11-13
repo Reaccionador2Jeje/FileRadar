@@ -29,6 +29,23 @@ FileRadar helps you understand what is stored on a drive or inside a directory. 
 
 The executable is created at build/fileradar.
 
+## Install on Android with Termux (recommended)
+
+For a one-command installation, open Termux and run:
+
+```sh
+pkg install -y curl
+curl -fsSL https://raw.githubusercontent.com/Reaccionador2Jeje/FileRadar/main/scripts/install-termux.sh | bash
+```
+
+The installer installs the required build tools, downloads FileRadar, compiles it, runs its tests, and installs the `fileradar` command into Termux. Then use:
+
+```sh
+fileradar --help
+```
+
+To update, run the same installer command again. To uninstall the command, download and run `scripts/uninstall-termux.sh` from the repository. The uninstaller asks separately before deleting the downloaded source and build directory.
+
 ## Build on Android with Termux
 
 Install the build tools:
