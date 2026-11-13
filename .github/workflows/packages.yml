@@ -49,13 +49,13 @@ jobs:
         shell: pwsh
         run: |
           choco install nsis -y
-          vcpkg install wxwidgets:x64-windows
+          vcpkg install wxwidgets:x64-windows-static
 
       - name: Configure Windows
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DFILERADAR_BUILD_GUI=ON -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DFILERADAR_BUILD_GUI=ON -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-static
 
       - name: Configure Unix
         if: runner.os != 'Windows'
