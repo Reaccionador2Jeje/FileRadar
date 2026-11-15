@@ -162,3 +162,9 @@ FileRadar is distributed under the Apache License 2.0. See LICENSE.
 ### TUI diagnostics
 
 The TUI includes options to diagnose an individual file and scan the selected folder for suspicious file structures. These checks are read-only and do not repair or modify files.
+
+## Walletie compatibility
+
+File analysis and local file-management features remain independent of Walletie. Walletie must never be required to scan, inspect, or manage local files.
+
+Walletie V1 currently accepts AtDev Cloud HS256 tokens only; other identity systems need the documented SSO bridge first. See the [Walletie integration matrix](https://github.com/Reaccionador2Jeje/Walletie/blob/main/docs/INTEGRATION_MATRIX.md).
